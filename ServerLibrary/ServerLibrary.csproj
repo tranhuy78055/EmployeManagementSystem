@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- PropertyGroup contains general properties for the project -->
+  <PropertyGroup>
+    <!-- TargetFramework specifies the version of .NET being targeted -->
+    <TargetFramework>net8.0</TargetFramework>
+    <!-- ImplicitUsings enables implicit using directives -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Nullable enables nullable reference types -->
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- ItemGroup contains references to NuGet packages -->
+  <ItemGroup>
+    <!-- Reference to Bcrypt.Net-Next package -->
+    <PackageReference Include="Bcrypt.Net-Next" Version="4.0.3" />
+    <!-- Reference to Microsoft.AspNetCore.Authentication.JwtBearer package -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <!-- Reference to Microsoft.EntityFrameworkCore package -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <!-- Reference to Microsoft.EntityFrameworkCore.SqlServer package -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <!-- Reference to Microsoft.EntityFrameworkCore.Tools package with additional attributes -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <!-- Reference to Microsoft.IdentityModel.Tokens package -->
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.0.3" />
+    <!-- Reference to System.IdentityModel.Tokens.Jwt package -->
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Repositories\Contracts\" />
+    <Folder Include="Repositories\Implementations\" />
+  </ItemGroup>
+</Project>
