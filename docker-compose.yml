@@ -1,0 +1,28 @@
+
+networks:
+  demoapp:
+services:
+  demoappdb:
+    container_name: app-dp
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 8002:1433
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Password@123#"
+    networks:
+      - demoapp
+  server:
+    container_name: demo-employee-management-system
+    image: ${DOCKER_REGISTRY-}server
+    build:
+      context: .
+      dockerfile: Server/Dockerfile
+    ports:
+     - 8001:80
+    depends_on:
+      - demoappdb
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=demoappdb;Database=DemoEmployeeDb;User=sa;Password=Password@123#"
+    networks:
+      - demoapp
