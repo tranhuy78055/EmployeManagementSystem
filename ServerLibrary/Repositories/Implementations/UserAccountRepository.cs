@@ -24,6 +24,7 @@ namespace ServerLibrary.Repositories.Implementations
         public async Task<GeneralResponse> CreateAsync(Register user)
         {
            if (user is null) return new GeneralResponse(false, "Model is empty");
+
             var checkUser = await FindUserByEmail(user.Email!);
             if (checkUser != null) return new GeneralResponse(false, "User already exists");
 
@@ -36,7 +37,7 @@ namespace ServerLibrary.Repositories.Implementations
             });
             // Check , create and assign role to user
             var checkAdminRole = await appDbContext.SystemRoles.FirstOrDefaultAsync(x => x.Name!.ToLower()!.Equals(Constants.Admin));
-            if (checkAdminRole != null)
+            if (checkAdminRole is null)
             {
                 var createAdminRole = await AddToDatabase(new SystemRole
                 {
@@ -116,7 +117,7 @@ namespace ServerLibrary.Repositories.Implementations
                 issuer:config.Value.Issuer,
                 audience:config.Value.Audience,
                 claims:userClaims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddSeconds(2),
                 signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
