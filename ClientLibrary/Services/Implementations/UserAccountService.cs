@@ -36,8 +36,9 @@ namespace ClientLibrary.Services.Implementations
         {
             var httpClient = getHttpClient.GetPublicHttpClient();
             var result = await httpClient.PostAsJsonAsync($"{AuthUrl}/refresh-token", token);
-            if (!result.IsSuccessStatusCode) return new LoginResponse(false, "Error occured");
-            
+
+            if (!result.IsSuccessStatusCode) return new LoginResponse(false, "error occured");
+
             return await result.Content.ReadFromJsonAsync<LoginResponse>()!;
         }
 

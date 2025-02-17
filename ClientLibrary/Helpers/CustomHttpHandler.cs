@@ -11,18 +11,9 @@ using System.Threading.Tasks;
 
 namespace ClientLibrary.Helpers
 {
-    public class CustomHttpHandler : DelegatingHandler, IDisposable
+    public class CustomHttpHandler
+        (GetHttpClient getHttpClient, LocalStorageService localStorageService,IUserAccountService accountService) : DelegatingHandler
     {
-        private readonly GetHttpClient _getHttpClient;
-        private readonly LocalStorageService _localStorageService;
-        private readonly IUserAccountService _accountService;
-
-        public CustomHttpHandler(GetHttpClient getHttpClient, LocalStorageService localStorageService, IUserAccountService accountService)
-        {
-            _getHttpClient = getHttpClient;
-            _localStorageService = localStorageService;
-            _accountService = accountService;
-        }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -30,16 +21,13 @@ namespace ClientLibrary.Helpers
             bool registerUrl = request.RequestUri!.AbsoluteUri.Contains("register");
             bool refreshTokenUrl = request.RequestUri!.AbsoluteUri.Contains("refresh-token");
 
-            if (loginUrl || registerUrl || refreshTokenUrl)
-            {
-                return await base.SendAsync(request, cancellationToken);
-            }
-
+            if (loginUrl || registerUrl || refreshTokenUrl) return await base.SendAsync(request, cancellationToken);
+       
             var result = await base.SendAsync(request, cancellationToken);
             if (result.StatusCode == HttpStatusCode.Unauthorized)
             {
                 // Get token from localStorage
-                var stringToken = await _localStorageService.GetToken();
+                var stringToken = await localStorageService.GetToken();
                 if (stringToken == null) return result;
                 // check if the header containers token
                 string token = string.Empty;
@@ -66,11 +54,25 @@ namespace ClientLibrary.Helpers
 
         private async Task<string> GetFreshToken(string refreshToken)
         {
-            var result = await _accountService.RefreshTokenAsync(new RefreshToken() { Token = refreshToken });
-            string serializedToken = Serializations.SerializeObj(new UserSession()
-            { Token = result.Token, RefreshToken = result.RefreshToken });
-            await _localStorageService.SetToken(serializedToken);
-            return result.Token;
+            try
+            {
+                var result = await accountService.RefreshTokenAsync(new RefreshToken() { Token = refreshToken });
+                if (result == null || string.IsNullOrEmpty(result.Token))
+                {
+                    Console.WriteLine("Failed to refresh token: result is null or token is empty.");
+                    return null;
+                }
+
+                string serializedToken = Serializations.SerializeObj(new UserSession()
+                { Token = result.Token, RefreshToken = result.RefreshToken });
+                await localStorageService.SetToken(serializedToken);
+                return result.Token;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception occurred while refreshing token: {ex.Message}");
+                return null;
+            }
         }
     }
 }
