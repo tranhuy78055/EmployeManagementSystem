@@ -3,21 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BaseLibrary.Entities
 {
-    public class BaseEntity
+    public class OtherBaseEntity
     {
-       
         public int Id { get; set; }
         [Required]
-        public string? Name { get; set; }
-
-        //// Relationship : One to Many
-        //[JsonIgnore]
-        //public List<Employee>? Employees { get; set; }
+        public string CivilId { get; set; } = string.Empty;
+        [Required]
+        public string FileNumber { get; set; } = string.Empty;
+        public string? OtherId { get; set; }
 
     }
 }

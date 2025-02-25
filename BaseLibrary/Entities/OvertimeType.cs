@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BaseLibrary.Entities
 {
-    public class GeneralDepartment : BaseEntity
+    public class OvertimeType: BaseEntity
     {
-        // One to many relationship with Department
-        public List<Department>? Departments { get; set; }
+        // Relationship : One to many with Overtime
+        public List<Overtime> Overtimes = new List<Overtime>();
     }
 }

@@ -1,31 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BaseLibrary.Entities
 {
-    public class Employee
+    public class Employee: BaseEntity
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
+        [Required]
         public string? CivilId { get; set; }
+        [Required]
         public string? FileNumber { get; set; }
+        [Required]
         public string? Fullname { get; set; }
+        [Required]
         public string? JobName { get; set; }
+        [Required]
         public string? Address { get; set; }
+        [Required,DataType(DataType.PhoneNumber)]
         public string? TelephoneNumber { get; set; }
+        [Required]
         public string? Photo { get; set; }
         public string? Other { get; set; }
 
-        // Relationship: Many to One
-        // GeneralDepartment
-        public GeneralDepartment? GeneralDepartment { get; set; }
-        public int? GeneralDepartmentId { get; set; }
-        // Department
-        public Department? Department { get; set; }
-        public int? DepartmentId { get; set; }
+        // Many to one relationship with branch
         // Branch
         public Branch? Branch { get; set; }
         public int? BranchId { get; set; }
