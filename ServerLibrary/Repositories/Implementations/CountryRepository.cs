@@ -31,7 +31,7 @@ namespace ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Insert(Country item)
         {
-            if (!await CheckName(item.Name!)) return new(false, "Department already Added");
+            if (!await CheckName(item.Name!)) return new(false, "Country already Added");
             appDbContext.Countries.Add(item);
             await Commit();
             return Success();
@@ -52,7 +52,7 @@ namespace ServerLibrary.Repositories.Implementations
             return item is null;
         }
 
-        private static GeneralResponse Notfound() => new(false, "Sorry department not found");
+        private static GeneralResponse Notfound() => new(false, "Sorry Country not found");
         private static GeneralResponse Success() => new(true, "Process completed");
         private async Task Commit() => await appDbContext.SaveChangesAsync();
     }

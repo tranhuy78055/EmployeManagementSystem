@@ -28,9 +28,9 @@ namespace BaseLibrary.Entities
         // Many to one relationship with branch
         // Branch
         public Branch? Branch { get; set; }
-        public int? BranchId { get; set; }
+        public int BranchId { get; set; }
         // Town
         public Town? Town { get; set; }
-        public int? TownId { get; set; }
+        public int TownId { get; set; }
     }
 }

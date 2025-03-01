@@ -15,14 +15,17 @@ namespace ServerLibrary.Repositories.Implementations
     {
         public async Task<GeneralResponse> DeleteById(int id)
         {
-            var dep = await appDbContext.Cities.FindAsync(id);
-            if (dep == null) return Notfound();
-            appDbContext.Cities.Remove(dep);
+            var city = await appDbContext.Cities.FindAsync(id);
+            if (city == null) return Notfound();
+            appDbContext.Cities.Remove(city);
             await Commit();
             return Success();
         }
 
-        public async Task<List<City>> GetAll() => await appDbContext.Cities.ToListAsync();
+        public async Task<List<City>> GetAll() => await appDbContext
+            .Cities
+            .AsNoTracking()
+            .Include(c=>c.Country).ToListAsync();
 
 
         public async Task<City> GetById(int id) => await appDbContext.Cities.FindAsync(id);
@@ -31,7 +34,7 @@ namespace ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Insert(City item)
         {
-            if (!await CheckName(item.Name!)) return new(false, "Department already Added");
+            if (!await CheckName(item.Name!)) return new(false, "City already Added");
             appDbContext.Cities.Add(item);
             await Commit();
             return Success();
@@ -40,9 +43,10 @@ namespace ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Update(City item)
         {
-            var dep = await appDbContext.Cities.FindAsync(item.Id);
-            if (dep is null) return Notfound();
-            dep.Name = item.Name;
+            var city = await appDbContext.Cities.FindAsync(item.Id);
+            if (city is null) return Notfound();
+            city.Name = item.Name;
+            city.CountryId = item.CountryId;
             await Commit();
             return Success();
         }
@@ -52,7 +56,7 @@ namespace ServerLibrary.Repositories.Implementations
             return item is null;
         }
 
-        private static GeneralResponse Notfound() => new(false, "Sorry department not found");
+        private static GeneralResponse Notfound() => new(false, "Sorry City not found");
         private static GeneralResponse Success() => new(true, "Process completed");
         private async Task Commit() => await appDbContext.SaveChangesAsync();
     }

@@ -22,7 +22,11 @@ namespace ServerLibrary.Repositories.Implementations
             return Success();
         }
 
-        public async Task<List<Town>> GetAll() => await appDbContext.Towns.ToListAsync();
+        public async Task<List<Town>> GetAll() => await appDbContext
+            .Towns
+            .AsNoTracking()
+            .Include(c => c.City)
+            .ToListAsync();
 
 
         public async Task<Town> GetById(int id) => await appDbContext.Towns.FindAsync(id);
@@ -31,7 +35,7 @@ namespace ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Insert(Town item)
         {
-            if (!await CheckName(item.Name!)) return new(false, "Department already Added");
+            if (!await CheckName(item.Name!)) return new(false, "Town already Added");
             appDbContext.Towns.Add(item);
             await Commit();
             return Success();
@@ -43,6 +47,7 @@ namespace ServerLibrary.Repositories.Implementations
             var dep = await appDbContext.Towns.FindAsync(item.Id);
             if (dep is null) return Notfound();
             dep.Name = item.Name;
+            dep.CityId = item.CityId;
             await Commit();
             return Success();
         }
@@ -52,7 +57,7 @@ namespace ServerLibrary.Repositories.Implementations
             return item is null;
         }
 
-        private static GeneralResponse Notfound() => new(false, "Sorry department not found");
+        private static GeneralResponse Notfound() => new(false, "Sorry Town not found");
         private static GeneralResponse Success() => new(true, "Process completed");
         private async Task Commit() => await appDbContext.SaveChangesAsync();
     }

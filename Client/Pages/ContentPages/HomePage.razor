@@ -1,8 +1,14 @@
 ﻿@page "/home/dashboard"
-@using Client.Pages.AdminstrationPages
-@using Client.Pages.DepartmentPage
+
 <TableBanner />
 <GeneralDepartmentPage />
+<DepartmentPage />
+<BranchPage />
+<CountryPage />
+<CityPage />
+<TownPage />
+<UserPage />
+<EmployeePage />
 @code {
 	[CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; }
 	protected override async Task OnInitializedAsync()
