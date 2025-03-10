@@ -44,6 +44,21 @@ builder.Services.AddScoped<IGnericServiceInterface<City>, GenericServiceImplemen
 // Employee
 builder.Services.AddScoped<IGnericServiceInterface<Employee>, GenericServiceImplementation<Employee>>();
 
+// Doctor
+builder.Services.AddScoped<IGnericServiceInterface<Doctor>, GenericServiceImplementation<Doctor>>();
+
+// Overtime/ OvertimeType
+builder.Services.AddScoped<IGnericServiceInterface<Overtime>, GenericServiceImplementation<Overtime>>();
+builder.Services.AddScoped<IGnericServiceInterface<OvertimeType>, GenericServiceImplementation<OvertimeType>>();
+
+// Sanction/ SanctionType
+builder.Services.AddScoped<IGnericServiceInterface<Sanction>, GenericServiceImplementation<Sanction>>();
+builder.Services.AddScoped<IGnericServiceInterface<SanctionType>, GenericServiceImplementation<SanctionType>>();
+
+// Vacation/ VacationType
+builder.Services.AddScoped<IGnericServiceInterface<Vacation>, GenericServiceImplementation<Vacation>>();
+builder.Services.AddScoped<IGnericServiceInterface<VacationType>, GenericServiceImplementation<VacationType>>();
+
 builder.Services.AddScoped<AllState>();
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped<SfDialogService>();

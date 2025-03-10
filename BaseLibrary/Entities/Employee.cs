@@ -14,8 +14,6 @@ namespace BaseLibrary.Entities
         [Required]
         public string? FileNumber { get; set; }
         [Required]
-        public string? Fullname { get; set; }
-        [Required]
         public string? JobName { get; set; }
         [Required]
         public string? Address { get; set; }

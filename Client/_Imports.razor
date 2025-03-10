@@ -26,6 +26,10 @@
 @using Client.Pages.UserPages
 @using Client.Pages.OtherPages
 @using Client.Pages.EmployeePages
+@using Client.Pages.OtherPages.DoctorPages
+@using Client.Pages.OtherPages.OvertimePages
+@using Client.Pages.OtherPages.VacationPages
+@using Client.Pages.OtherPages.SanctionPages
 
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IUserAccountService accountService
@@ -51,3 +55,18 @@
 
 @* Employee *@
 @inject IGnericServiceInterface<Employee> employeeService
+
+@* Doctor  *@
+@inject IGnericServiceInterface<Doctor> doctorService
+
+@* Overtime / OvertimeType  *@
+@inject IGnericServiceInterface<Overtime> overtimeService
+@inject IGnericServiceInterface<OvertimeType> overtimeTypeService
+
+@* Vacation / VacationType  *@
+@inject IGnericServiceInterface<Vacation> vacationService
+@inject IGnericServiceInterface<VacationType> vacationTypeService
+
+@* Sanction / SanctionType  *@
+@inject IGnericServiceInterface<Sanction> sanctionService
+@inject IGnericServiceInterface<SanctionType> sanctionTypeService

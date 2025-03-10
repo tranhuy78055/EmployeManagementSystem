@@ -12,7 +12,7 @@ namespace BaseLibrary.Entities
         [Required]
         public DateTime Date { get; set; }
         [Required]
-        public string MedicalDianose { get; set; } = string.Empty;
+        public string MedicalDiagnose { get; set; } = string.Empty;
         [Required]
         public string MedicalRecommendation { get; set; } = string.Empty;
 

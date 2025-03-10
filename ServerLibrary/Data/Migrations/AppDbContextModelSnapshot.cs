@@ -135,26 +135,18 @@ namespace ServerLibrary.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CivilId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FileNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("MedicalDianose")
+                    b.Property<string>("MedicalDiagnose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MedicalRecommendation")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OtherId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -174,7 +166,7 @@ namespace ServerLibrary.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("BranchId")
+                    b.Property<int>("BranchId")
                         .HasColumnType("int");
 
                     b.Property<string>("CivilId")
@@ -182,10 +174,6 @@ namespace ServerLibrary.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FileNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fullname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -208,7 +196,7 @@ namespace ServerLibrary.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TownId")
+                    b.Property<int>("TownId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -245,19 +233,11 @@ namespace ServerLibrary.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CivilId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("FileNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OtherId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OvertimeTypeId")
                         .HasColumnType("int");
@@ -316,19 +296,11 @@ namespace ServerLibrary.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CivilId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FileNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OtherId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Punishment")
                         .IsRequired()
@@ -337,7 +309,7 @@ namespace ServerLibrary.Data.Migrations
                     b.Property<DateTime>("PunishmentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("SanctionTypeId")
+                    b.Property<int>("SanctionTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -429,19 +401,11 @@ namespace ServerLibrary.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CivilId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
 
                     b.Property<int>("NumberofDays")
                         .HasColumnType("int");
-
-                    b.Property<string>("OtherId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -510,11 +474,15 @@ namespace ServerLibrary.Data.Migrations
                 {
                     b.HasOne("BaseLibrary.Entities.Branch", "Branch")
                         .WithMany("Employees")
-                        .HasForeignKey("BranchId");
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BaseLibrary.Entities.Town", "Town")
                         .WithMany("Employees")
-                        .HasForeignKey("TownId");
+                        .HasForeignKey("TownId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Branch");
 
@@ -536,7 +504,9 @@ namespace ServerLibrary.Data.Migrations
                 {
                     b.HasOne("BaseLibrary.Entities.SanctionType", "SanctionType")
                         .WithMany("Sanctions")
-                        .HasForeignKey("SanctionTypeId");
+                        .HasForeignKey("SanctionTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("SanctionType");
                 });
