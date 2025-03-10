@@ -1,0 +1,226 @@
+﻿@implements IDisposable
+@if (allState.ShowUserProfile)
+{
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <EditForm Model="userProfileState.userProfile" OnValidSubmit="UpdateProfile">
+                    <DataAnnotationsValidator />
+                    <div class="card shadow-lg border-0 rounded-lg overflow-hidden">
+                        <div class="card-header bg-gradient-primary text-white p-3">
+                            <h4 class="mb-0 fw-bold">Your Profile</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="text-center mb-4">
+                                <div class="position-relative d-inline-block">
+                                    <img class="profile-image shadow" src="@userProfileState.userProfile.Image" alt="Profile Image">
+                                    <div class="image-upload-overlay">
+                                        <InputFile OnChange="UploadImage" id="profileImage" hidden />
+                                        <label for="profileImage" class="btn btn-sm btn-light rounded-circle upload-btn">
+                                            <i class="bi bi-camera-fill"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="form-label fw-bold text-muted small">User ID</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-fingerprint"></i>
+                                    </span>
+                                    <input type="text" value="@userProfileState.userProfile.Id" class="form-control bg-light" disabled />
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="form-label fw-bold text-muted small">Full Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person-fill"></i>
+                                    </span>
+                                    <InputText @bind-Value="userProfileState.userProfile.Name" class="form-control" placeholder="Enter your full name" />
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label class="form-label fw-bold text-muted small">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-envelope-fill"></i>
+                                    </span>
+                                    <input type="email" @bind="userProfileState.userProfile.Email" class="form-control" placeholder="Enter your email" />
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                @if (ShowSpinner)
+                                {
+                                    <ButtonLoadingSpinner />
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary px-4 py-2" type="submit">
+                                        <i class="bi bi-check2-circle me-2"></i> Save Changes
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light p-3">
+                            <ValidationSummary class="text-danger" />
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .bg-gradient-primary {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    }
+
+    .profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .image-upload-overlay {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    }
+
+    .upload-btn {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .card {
+    transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+    transform: translateY(-5px);
+    }
+
+    .form-control:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+    }
+
+    .btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+    }
+
+    .btn-primary:hover {
+    background-color: #2e59d9;
+    border-color: #2653d4;
+    }
+</style>
+
+@code {
+    public bool ShowSpinner { get; set; } = false;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await UserDetails();
+        allState.Action += StateHasChanged;
+        userProfileState.Action += StateHasChanged;
+    }
+
+    private async Task UserDetails()
+    {
+        try
+        {
+            var client = await getHttpClient.GetPrivateHttpClient();
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+
+            userProfileState.userProfile.Id = authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+            userProfileState.userProfile.Name = authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)!.Value;
+            userProfileState.userProfile.Email = authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)!.Value;
+
+            var response = await client.GetAsync($"api/authentication/user-image/{userProfileState.userProfile.Id}");
+            if (!response.IsSuccessStatusCode) return;
+
+            var result = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(result)) return;
+
+            userProfileState.userProfile.Image = result;
+        }
+        catch
+        {
+            // Error handling could be improved here
+        }
+    }
+    private async Task LogoutClicked()
+    {
+        var logoutModel = new UserSession();
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(logoutModel);
+        NavManager.NavigateTo("/identity/account/login", replace: true, forceLoad: true);
+    }
+
+    private async Task UpdateProfile()
+    {
+        if (userProfileState.userProfile.Image == "./images/Profile/profile1.png")
+        {
+            await dialogService.AlertAsync("Please upload a profile image.", "Profile Incomplete");
+            return;
+        }
+
+        ShowSpinner = true;
+        var client = await getHttpClient.GetPrivateHttpClient();
+        var response = await client.PutAsJsonAsync("api/authentication/update-profile", userProfileState.userProfile);
+        if (!response.IsSuccessStatusCode)
+        {
+            ShowSpinner = false;
+            await dialogService.AlertAsync("Failed to update profile.", "Error");
+            return;
+        }
+
+        var result = await response.Content.ReadFromJsonAsync<bool>();
+        if (result)
+        {
+            ShowSpinner = false;
+            await dialogService.AlertAsync("Your profile has been successfully updated.", "Success");
+            userProfileState.ProfileUpdate();
+            await LogoutClicked();
+        }
+
+        ShowSpinner = false;
+    }
+
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        if (e.File.Name.ToLower().Contains(".png"))
+        {
+            var format = "image/png";
+            var resizeImage = await e.File.RequestImageFileAsync(format, 300, 300);
+            var buffer = new byte[resizeImage.Size];
+            await resizeImage.OpenReadStream().ReadAsync(buffer);
+            var imageData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+            userProfileState.userProfile.Image = imageData;
+            imageData = "";
+            return;
+        }
+
+        await dialogService.AlertAsync("Only PNG files are supported. Please select a PNG image.", "Invalid File");
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
+        userProfileState.Action -= StateHasChanged;
+    }
+}

@@ -18,5 +18,7 @@ namespace ServerLibrary.Repositories.Contracts
         Task<GeneralResponse> UpdateUser(ManageUser user);
         Task<List<SystemRole>> GetRoles();
         Task<GeneralResponse> DeleteUser(int id);
+        Task<string> GetUserImage(int id);
+        Task<bool> UpdateProfile(UserProfile profile);
     }
 }

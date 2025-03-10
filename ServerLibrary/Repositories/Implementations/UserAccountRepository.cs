@@ -23,13 +23,13 @@ namespace ServerLibrary.Repositories.Implementations
     {
         public async Task<GeneralResponse> CreateAsync(Register user)
         {
-           if (user is null) return new GeneralResponse(false, "Model is empty");
+            if (user is null) return new GeneralResponse(false, "Model is empty");
 
             var checkUser = await FindUserByEmail(user.Email!);
             if (checkUser != null) return new GeneralResponse(false, "User already exists");
 
             //Save user to database
-            var applicationUser = await AddToDatabase( new ApplicationUser
+            var applicationUser = await AddToDatabase(new ApplicationUser
             {
                 Email = user.Email,
                 Fullname = user.Fullname,
@@ -51,11 +51,11 @@ namespace ServerLibrary.Repositories.Implementations
             SystemRole response = new();
             if (checkUserRole is null)
             {
-              response = await AddToDatabase(new SystemRole
-              {
-                  Name = Constants.User
-              });
-              await AddToDatabase(new UserRole() { RoleId = response.Id, UserId = applicationUser.Id });
+                response = await AddToDatabase(new SystemRole
+                {
+                    Name = Constants.User
+                });
+                await AddToDatabase(new UserRole() { RoleId = response.Id, UserId = applicationUser.Id });
             }
             else
             {
@@ -66,13 +66,13 @@ namespace ServerLibrary.Repositories.Implementations
 
         public async Task<LoginResponse> SignInAsync(Login user)
         {
-          if (user is null) return new LoginResponse(false, "Model is empty");
+            if (user is null) return new LoginResponse(false, "Model is empty");
             var applicationUser = await FindUserByEmail(user.Email!);
             if (applicationUser is null) return new LoginResponse(false, "User does not exist");
 
             // Verify password
             if (!BCrypt.Net.BCrypt.Verify(user.Password, applicationUser.Password)) return new LoginResponse(false, "Email or Password not valid");
-            
+
             var getUserRole = await FindUserRole(applicationUser.Id);
             if (getUserRole is null) return new LoginResponse(false, "User does not have a role");
 
@@ -90,7 +90,7 @@ namespace ServerLibrary.Repositories.Implementations
             }
             else
             {
-                await AddToDatabase(new RefreshTokenInfo{Token = refreshToken,UserId = applicationUser.Id});
+                await AddToDatabase(new RefreshTokenInfo { Token = refreshToken, UserId = applicationUser.Id });
             }
 
             return new LoginResponse(true, "Login successful", jwtToken, refreshToken);
@@ -109,26 +109,27 @@ namespace ServerLibrary.Repositories.Implementations
                 new Claim(ClaimTypes.Role, role)
             };
             var token = new JwtSecurityToken(
-                issuer:config.Value.Issuer,
-                audience:config.Value.Audience,
-                claims:userClaims,
+                issuer: config.Value.Issuer,
+                audience: config.Value.Audience,
+                claims: userClaims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         private static string GenerateRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-      
+
         private async Task<ApplicationUser?> FindUserByEmail(string email)
         {
             return await appDbContext.ApplicationUsers.FirstOrDefaultAsync(x => x.Email!.ToLower()!.Equals(email!.ToLower()));
         }
         private async Task<UserRole> FindUserRole(int userId) => await appDbContext.UserRoles.FirstOrDefaultAsync(x => x.UserId == userId);
-    
+
         private async Task<SystemRole> FindRoleName(int roleId) => await appDbContext.SystemRoles.FirstOrDefaultAsync(x => x.Id == roleId);
-       
+
         private async Task<T> AddToDatabase<T>(T model)
-        { var result = appDbContext.Add(model!);
+        {
+            var result = appDbContext.Add(model!);
             await appDbContext.SaveChangesAsync();
             return (T)result.Entity;
 
@@ -139,19 +140,19 @@ namespace ServerLibrary.Repositories.Implementations
         {
             if (token is null) return new LoginResponse(false, "Model is empty");
 
-            var findToken= await appDbContext.RefreshTokenInfos.FirstOrDefaultAsync(x => x.Token!.Equals(token.Token));
+            var findToken = await appDbContext.RefreshTokenInfos.FirstOrDefaultAsync(x => x.Token!.Equals(token.Token));
             if (findToken is null) return new LoginResponse(false, "Refresh token could not be generated because user not found");
 
             // get user details
             var user = await appDbContext.ApplicationUsers.FirstOrDefaultAsync(x => x.Id == findToken.UserId);
             if (user is null) return new LoginResponse(false, "Refresh token could not be generated because user not found");
-            
+
             var userRole = await FindUserRole(user.Id);
             var roleName = await FindRoleName(userRole!.RoleId);
             string jwtToken = GenerateToken(user, roleName.Name!);
             string refreshToken = GenerateRefreshToken();
 
-            var updateRefreshToken = await appDbContext.RefreshTokenInfos.FirstOrDefaultAsync(x=>x.UserId == user.Id);
+            var updateRefreshToken = await appDbContext.RefreshTokenInfos.FirstOrDefaultAsync(x => x.UserId == user.Id);
             if (updateRefreshToken is null) return new LoginResponse(false, "Refresh token could not be generated because user has not signed in");
 
             updateRefreshToken.Token = refreshToken;
@@ -200,5 +201,17 @@ namespace ServerLibrary.Repositories.Implementations
         private async Task<List<UserRole>> UserRoles() => await appDbContext.UserRoles.AsNoTracking().ToListAsync();
         private async Task<List<ApplicationUser>> GetApplicationUsers() => await appDbContext.ApplicationUsers.AsNoTracking().ToListAsync();
 
+        public async Task<string> GetUserImage(int id) => (await GetApplicationUsers()).FirstOrDefault(u => u.Id == id)!.Image!;
+
+        public async Task<bool> UpdateProfile(UserProfile profile)
+        {
+            var user = await appDbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == int.Parse(profile.Id));
+            user!.Email = profile.Email;
+            user!.Fullname = profile.Name;
+            user!.Image = profile.Image;
+            await appDbContext.SaveChangesAsync();
+            return true;
+
+        }
     }
 }

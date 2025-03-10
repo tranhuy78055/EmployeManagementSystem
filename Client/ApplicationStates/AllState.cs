@@ -131,8 +131,18 @@ namespace Client.ApplicationStates
             ShowVacationType = true;
             Action?.Invoke();
         }
+
+        // Profile
+        public bool ShowUserProfile { get; set; }
+        public void UserProfileClicked()
+        {
+            ResetAllDepartments();
+            ShowUserProfile = true;
+            Action?.Invoke();
+        }
         private void ResetAllDepartments()
         {
+            ShowUserProfile = false;
             ShowGeneralDepartment = false;
             ShowDepartment = false;
             ShowBranch = false;

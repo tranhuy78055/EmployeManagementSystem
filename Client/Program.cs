@@ -60,6 +60,8 @@ builder.Services.AddScoped<IGnericServiceInterface<Vacation>, GenericServiceImpl
 builder.Services.AddScoped<IGnericServiceInterface<VacationType>, GenericServiceImplementation<VacationType>>();
 
 builder.Services.AddScoped<AllState>();
+builder.Services.AddScoped<UserProfileState>();
+
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped<SfDialogService>();
 

@@ -14,6 +14,7 @@
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Grids
+@using System.Security.Claims
 
 @using Client.ApplicationStates
 @using BaseLibrary.DTOs
@@ -30,6 +31,7 @@
 @using Client.Pages.OtherPages.OvertimePages
 @using Client.Pages.OtherPages.VacationPages
 @using Client.Pages.OtherPages.SanctionPages
+@using Client.Pages.ProfilePages
 
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IUserAccountService accountService
@@ -70,3 +72,7 @@
 @* Sanction / SanctionType  *@
 @inject IGnericServiceInterface<Sanction> sanctionService
 @inject IGnericServiceInterface<SanctionType> sanctionTypeService
+
+@* User Profile *@
+@inject UserProfileState userProfileState
+@inject GetHttpClient getHttpClient
