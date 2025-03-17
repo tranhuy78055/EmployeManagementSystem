@@ -5,9 +5,9 @@ namespace Client.ApplicationStates
     public class AllState
     {
         // Scope action
-        public Action? Action { get; set; }
+        public event Action? Action;
         //General Department
-
+        public void NotifyStateChanged() => Action?.Invoke();
         public bool ShowGeneralDepartment { get; set; }
 
         public void GeneralDepartmentClicked()

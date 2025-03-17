@@ -1,92 +1,124 @@
-﻿@if(ShowDetailsPage)
+﻿@if (ShowDetailsPage)
 {
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card border-success shadow-lg">
-                    <div class="card-header">@EmployeeDetails.Name Details</div>
-                    <div class="card-body">
-                        <div class="hstack gap-2">
-                            <div class="vstack gap-3">
-                                <img src="@EmployeeDetails.Photo" class="card-img-top border-warning shadow-sm" style="width:100px; height:100px; border-radius:50%;" />
-                                <table class="table border-danger">
-                                    <tbody>
-                                        <tr>
-                                            <td><h6 class="fw-bold">Name:</h6></td>
-                                            <td>@EmployeeDetails.Name</td>
-                                        </tr>
-                                        <tr>
-                                            <td><h6 class="fw-bold">Job Title:</h6></td>
-                                            <td>@EmployeeDetails.JobName</td>
-                                        </tr>
-                                        <tr>
-                                            <td><h6 class="fw-bold">Telephone:</h6></td>
-                                            <td>@EmployeeDetails.TelephoneNumber</td>
-                                        </tr>
-                                        <tr>
-                                            <td><h6 class="fw-bold">Address:</h6></td>
-                                            <td>@EmployeeDetails.Address</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow rounded-3 border-0 overflow-hidden">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="mb-0">@EmployeeDetails.Name - Employee Profile</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <!-- Employee Profile Section -->
+                            <div class="col-md-4 text-center mb-4 mb-md-0">
+                                <div class="mb-4">
+                                    <img src="@EmployeeDetails.Photo"
+                                         class="img-thumbnail rounded-circle shadow-sm border-0"
+                                         style="width:150px; height:150px; object-fit: cover;"
+                                         alt="@EmployeeDetails.Name" />
+                                </div>
+                                <div class="p-3 bg-light rounded-3 shadow-sm">
+                                    <h4 class="mb-1">@EmployeeDetails.Name</h4>
+                                    <p class="text-muted mb-2">@EmployeeDetails.JobName</p>
+                                    <div class="d-flex justify-content-center gap-2 mt-3">
+                                        <a href="tel:@EmployeeDetails.TelephoneNumber" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-telephone-fill me-1"></i> Call
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-envelope-fill me-1"></i> Message
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                        
 
-                        <table class="table border-primary">
-                            <tbody>
-                                <tr>
-                                    <td colspan="2" class="text-center"><h6 class="fw-bold">Department Information</h6></td>
-                                </tr>
-                                <tr>
-                                    <td><h6 class="fw-bold">General Department:</h6></td>
-                                    <td>@EmployeeDetails.Branch.Department.GeneralDepartment.Name</td>
-                                </tr>
-                                <tr>
-                                    <td><h6 class="fw-bold">Department:</h6></td>
-                                    <td>@EmployeeDetails.Branch.Department.Name</td>
-                                </tr>
-                                <tr>
-                                    <td><h6 class="fw-bold">Branch:</h6></td>
-                                    <td>@EmployeeDetails.Branch.Name</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        
-                        <table class="table border-success">
-                            <tbody>
-                                <tr>
-                                    <td colspan="2" class="text-center"><h6 class="fw-bold">Location Information</h6></td>
-                                </tr>
-                                <tr>
-                                    <td><h6 class="fw-bold">Country:</h6></td>
-                                    <td>@EmployeeDetails.Town.City.Country.Name</td>
-                                </tr>
-                                <tr>
-                                    <td><h6 class="fw-bold">City:</h6></td>
-                                    <td>@EmployeeDetails.Town.City.Name</td>
-                                </tr>
-                                <tr>
-                                    <td><h6 class="fw-bold">Town:</h6></td>
-                                    <td>@EmployeeDetails.Town.Name</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            <!-- Info Tables Section -->
+                            <div class="col-md-8">
+                                <div class="row g-3">
+                                    <!-- Personal Info -->
+                                    <div class="col-12">
+                                        <div class="card border-0 shadow-sm rounded-3 h-100">
+                                            <div class="card-header bg-white border-bottom border-2 border-primary py-2">
+                                                <h6 class="mb-0"><i class="bi bi-person-fill me-2"></i>Personal Information</h6>
+                                            </div>
+                                            <div class="card-body p-3">
+                                                <div class="row g-2">
+                                                    <div class="col-sm-6">
+                                                        <p class="mb-1 text-muted small">Telephone</p>
+                                                        <p class="mb-2"><strong>@EmployeeDetails.TelephoneNumber</strong></p>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <p class="mb-1 text-muted small">Address</p>
+                                                        <p class="mb-2"><strong>@EmployeeDetails.Address</strong></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Department Info -->
+                                    <div class="col-md-6">
+                                        <div class="card border-0 shadow-sm rounded-3 h-100">
+                                            <div class="card-header bg-white border-bottom border-2 border-success py-2">
+                                                <h6 class="mb-0"><i class="bi bi-building me-2"></i>Department</h6>
+                                            </div>
+                                            <div class="card-body p-3">
+                                                <div class="mb-2">
+                                                    <p class="mb-1 text-muted small">General Department</p>
+                                                    <p class="mb-2"><strong>@EmployeeDetails.Branch.Department.GeneralDepartment.Name</strong></p>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <p class="mb-1 text-muted small">Department</p>
+                                                    <p class="mb-2"><strong>@EmployeeDetails.Branch.Department.Name</strong></p>
+                                                </div>
+                                                <div>
+                                                    <p class="mb-1 text-muted small">Branch</p>
+                                                    <p class="mb-0"><strong>@EmployeeDetails.Branch.Name</strong></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Location Info -->
+                                    <div class="col-md-6">
+                                        <div class="card border-0 shadow-sm rounded-3 h-100">
+                                            <div class="card-header bg-white border-bottom border-2 border-info py-2">
+                                                <h6 class="mb-0"><i class="bi bi-geo-alt-fill me-2"></i>Location</h6>
+                                            </div>
+                                            <div class="card-body p-3">
+                                                <div class="mb-2">
+                                                    <p class="mb-1 text-muted small">Country</p>
+                                                    <p class="mb-2"><strong>@EmployeeDetails.Town.City.Country.Name</strong></p>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <p class="mb-1 text-muted small">City</p>
+                                                    <p class="mb-2"><strong>@EmployeeDetails.Town.City.Name</strong></p>
+                                                </div>
+                                                <div>
+                                                    <p class="mb-1 text-muted small">Town</p>
+                                                    <p class="mb-0"><strong>@EmployeeDetails.Town.Name</strong></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-danger" @onclick="DetailsPageCloseBtnClicked">Close</button>
+                    <div class="card-footer bg-light d-flex justify-content-end py-3">
+                        <button class="btn btn-outline-danger px-4" @onclick="DetailsPageCloseBtnClicked">
+                            <i class="bi bi-x-circle me-2"></i>Close
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 }
+
 @code {
     [Parameter] public bool ShowDetailsPage { get; set; }
     [Parameter] public Employee EmployeeDetails { get; set; } = new();
     [Parameter] public EventCallback HandleDetailsPageCloseBtnClicked { get; set; } = new();
 
-	public async Task DetailsPageCloseBtnClicked()=>await HandleDetailsPageCloseBtnClicked.InvokeAsync();
-
-	
+    public async Task DetailsPageCloseBtnClicked() => await HandleDetailsPageCloseBtnClicked.InvokeAsync();
 }

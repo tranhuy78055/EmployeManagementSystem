@@ -10,11 +10,11 @@ namespace BaseLibrary.Entities
     public class Sanction: OtherBaseEntity
     {
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
         [Required]
         public string Punishment { get; set; } = string.Empty;
         [Required]
-        public DateTime PunishmentDate { get; set; }
+        public DateTime PunishmentDate { get; set; } = DateTime.Now;
         //public int SanctionTypeId { get; set; }
         public SanctionType? SanctionType { get; set; }
         [Required]

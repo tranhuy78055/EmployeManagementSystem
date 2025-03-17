@@ -1,131 +1,132 @@
 ﻿@implements IDisposable
+
 @if (allState.ShowHealth)
 {
-	<div class="container mt-5">
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="card border-warning shadow-lg">
-					<div class="card-header">
-						<h4 class="float-start">Health Information</h4>
-					</div>
-					<div class="card-header" style="max-height:580px; overflow-x:hidden; overflow-y:scroll;">
-						<div class="card-body">
-							@{
-								var Tool = new List<string>() { "Search", "ExcelExport", "PdfExport", "Print" };
-								<SfGrid DataSource="@Doctors" AllowPaging="true" AllowSorting="true" Toolbar="@Tool" AllowExcelExport="true" @ref="DefaultGrid" AllowPdfExport="true">
-									<GridPageSettings PageSize="5"></GridPageSettings>
-									<GridEvents OnToolbarClick="ToolbarClickHandler" TValue="Doctor"></GridEvents>
-									<GridColumns>
-										<GridColumn Field=@nameof(Doctor.EmployeeId) HeaderText="ID"></GridColumn>
-										<GridColumn Field=@nameof(Doctor.MedicalDiagnose) HeaderText="Medical Diagnose"></GridColumn>
-										<GridColumn Field=@nameof(Doctor.MedicalRecommendation) HeaderText="Recommendation"></GridColumn>
-										<GridColumn Field=@nameof(Doctor.Date) HeaderText="Date"></GridColumn>
-										<GridColumn HeaderText="Action">
-											<Template>
-												@{
-													var employee = (context as Doctor);
-													<div>
-														<i class="bi bi-pencil text-info" id="cursorStyle" @onclick="() => EditClicked(employee!)"></i>
-														<i class="bi bi-trash text-danger" id="cursorStyle" @onclick="() => DeleteClicked(employee!)"></i>
-													</div>
-												}
-											</Template>
-										</GridColumn>
-									</GridColumns>
-								</SfGrid>
-							}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="container mt-5">
+        <div class="card border-warning shadow-lg">
+            <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Health Information</h4>
+                <button class="btn btn-light" @onclick="AddButtonClicked">
+                    <i class="bi bi-plus-circle me-1"></i>Add New
+                </button>
+            </div>
+            <div class="card-body">
+                @{
+                    var Tool = new List<string>() { "Search", "ExcelExport", "PdfExport", "Print" };
+                }
+                <SfGrid DataSource="@Doctors"
+                        AllowPaging="true"
+                        AllowSorting="true"
+                        Toolbar="@Tool"
+                        AllowExcelExport="true"
+                        AllowPdfExport="true"
+                        @ref="DefaultGrid">
+                    <GridPageSettings PageSize="10"></GridPageSettings>
+                    <GridEvents OnToolbarClick="ToolbarClickHandler" TValue="Doctor"></GridEvents>
+                    <GridColumns>
+                        <GridColumn Field="@nameof(Doctor.EmployeeId)" HeaderText="Employee ID" Width="120" TextAlign="TextAlign.Center"></GridColumn>
+                        <GridColumn Field="@nameof(Doctor.MedicalDiagnose)" HeaderText="Medical Diagnose" Width="200"></GridColumn>
+                        <GridColumn Field="@nameof(Doctor.MedicalRecommendation)" HeaderText="Recommendation" Width="200"></GridColumn>
+                        <GridColumn Field="@nameof(Doctor.Date)" HeaderText="Date" Type="ColumnType.Date" Format="MM/dd/yyyy" Width="120" TextAlign="TextAlign.Center"></GridColumn>
+                        <GridColumn HeaderText="Actions" Width="120">
+                            <Template>
+                                @{
+                                    var doctor = context as Doctor;
+                                }
+                                <button class="btn btn-sm btn-info me-1" @onclick="() => EditClicked(doctor!)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteClicked(doctor!)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </Template>
+                        </GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            </div>
+        </div>
+    </div>
 }
-<style>
-	.cursorStyle {
-		cursor: pointer;
-	}
-</style>
 
 <DoctorDialog @ref="doctorDialog"
-			  Doctor="Doctor"
-			  HandleSaveOperationEvent="HandleSaveOperationEvent" />
-
-
+              Doctor="Doctor"
+              HandleSaveOperationEvent="HandleSaveOperationEvent" />
 
 @code {
-	private SfGrid<Doctor>? DefaultGrid;
-	DoctorDialog? doctorDialog;
-	Doctor Doctor = new();
-	public List<Doctor> Doctors { get; set; } = new();
+    private SfGrid<Doctor>? DefaultGrid;
+    DoctorDialog? doctorDialog;
+    Doctor Doctor = new();
+    public List<Doctor> Doctors { get; set; } = new();
 
-	protected override async Task OnInitializedAsync()
-	{
-		await GetHealth();
-		allState.Action += StateHasChanged;
-	}
-	private async Task GetHealth() => await doctorService.GetAll(Constants.DoctorBaseUrl);
+    protected override async Task OnInitializedAsync()
+    {
+        allState.Action += StateHasChanged;
+        await LoadDoctors();
+    }
 
-	void AddButtonClicked()
-	{
-		Doctor = new Doctor();
-		OpenDialog();
-	}
-	void OpenDialog() => doctorDialog?.OpenDialog();
+    private async Task LoadDoctors()
+    {
+        Doctors = await doctorService.GetAll(Constants.DoctorBaseUrl);
+    }
 
-	private async Task HandleSaveOperationEvent(Doctor doctor)
-	{
-		var result = await doctorService.Update(doctor, Constants.DoctorBaseUrl);
-		bool successCheck = await DisplayMessage(result.Flag, result.Message);
-		if (successCheck)
-		{
-			Doctor = new Doctor();
-			await GetHealth();
-		}
-	}
-	private void EditClicked(Doctor item)
-	{
-		Doctor = item;
-		OpenDialog();
-	}
+    void AddButtonClicked()
+    {
+        Doctor = new Doctor();
+        OpenDialog();
+    }
 
-	private async Task DeleteClicked(Doctor item)
-	{
-		bool confirm = await dialogService.
-		ConfirmAsync($"Are you sure you wanna delete this?", "Confirm Delete");
-		if (!confirm) return;
+    void OpenDialog() => doctorDialog?.OpenDialog();
 
-		var response = await doctorService.DeleteById(item.EmployeeId, Constants.DoctorBaseUrl);
-		var result = await DisplayMessage(response.Flag, response.Message);
-		if (result)
-			await GetHealth();
-	}
+    private async Task HandleSaveOperationEvent(Doctor doctor)
+    {
+        var result = await doctorService.Update(doctor, Constants.DoctorBaseUrl);
+        if (await DisplayMessage(result.Flag, result.Message))
+        {
+            Doctor = new Doctor();
+            await LoadDoctors();
+        }
+    }
 
+    private void EditClicked(Doctor doctor)
+    {
+        Doctor = doctor;
+        OpenDialog();
+    }
 
+    private async Task DeleteClicked(Doctor doctor)
+    {
+        bool confirm = await dialogService.ConfirmAsync("Are you sure you want to delete this?", "Confirm Delete");
+        if (!confirm) return;
 
-	private async Task<bool> DisplayMessage(bool flag, string message)
-	{
-		if (flag)
-		{
-			await dialogService.AlertAsync(message, "Success Operation");
-			return true;
-		}
-		else
-		{
-			await dialogService.AlertAsync(message, "Alert!");
-			return false;
-		}
-	}
+        var response = await doctorService.DeleteById(doctor.Id, Constants.DoctorBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+        {
+            await LoadDoctors();
+        }
+    }
 
-	public void Dispose() => allState.Action -= StateHasChanged;
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            await dialogService.AlertAsync(message, "Success");
+            return true;
+        }
+        else
+        {
+            await dialogService.AlertAsync(message, "Error");
+            return false;
+        }
+    }
 
-	// Excel export / PDF Export
-	public async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
-	{
-		if (args.Item.Text == "Excel Export")
-			await this.DefaultGrid!.ExcelExport();
+    public void Dispose() => allState.Action -= StateHasChanged;
 
-		if (args.Item.Text == "PDF Export")
-			await this.DefaultGrid!.PdfExport();
-	}
+    private async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+        if (args.Item.Text == "Excel Export")
+            await DefaultGrid!.ExcelExport();
+
+        if (args.Item.Text == "PDF Export")
+            await DefaultGrid!.PdfExport();
+    }
 }

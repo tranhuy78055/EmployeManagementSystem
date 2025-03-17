@@ -58,9 +58,14 @@
 		else
 		{
 			await HandleSaveOperationEvent.InvokeAsync(Department);
+			CloseDialog();
 		}
 	}
-
+	public void CloseDialog()
+	{
+		IsVisible = false;
+		StateHasChanged();
+	}
 	public async Task OpenDialog()
 	{
 		IsVisible = true;

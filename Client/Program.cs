@@ -59,7 +59,7 @@ builder.Services.AddScoped<IGnericServiceInterface<SanctionType>, GenericService
 builder.Services.AddScoped<IGnericServiceInterface<Vacation>, GenericServiceImplementation<Vacation>>();
 builder.Services.AddScoped<IGnericServiceInterface<VacationType>, GenericServiceImplementation<VacationType>>();
 
-builder.Services.AddScoped<AllState>();
+builder.Services.AddSingleton<AllState>();
 builder.Services.AddScoped<UserProfileState>();
 
 builder.Services.AddSyncfusionBlazor();

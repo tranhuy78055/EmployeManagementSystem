@@ -27,7 +27,7 @@
                             <label class="form-label">Select Type</label>
                             @if (ItemModel.SanctionType != null)
                             {
-                                string selected = ItemModel.SanctionType.Name;
+                                string selected = ItemModel.SanctionType.Name!;
                                 <SfDropDownList TValue="string" TItem="SanctionType" Placeholder="@selected" DataSource="SanctionTypes">
                                     <DropDownListFieldSettings Value="Id" Text="Name"></DropDownListFieldSettings>
                                     <DropDownListEvents TValue="string" TItem="SanctionType" ValueChange="OnValueChange"></DropDownListEvents>

@@ -2,157 +2,238 @@
 
 @if (allState.ShowGeneralDepartment)
 {
-	<div class="container mt-5">
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="card">
-					<div class="card-header">
-						<h4 class="float-start">General Department</h4>
-						<button class="btn btn-outline-success float-end" @onclick="OpenDialog">
-							<i class="bi bi-plus-circle-dotted"></i> Add Department
-						</button>
-					</div>
-					<div class="card-header" style="max-height:580px; overflow-x:hidden;overflow-y:scroll">
-					<div class="card-body">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th scope="col">#</th>
-									<th scope="col">Id</th>
-									<th scope="col">General Department</th>
-									<th scope="col">Action</th>
-								</tr>
-							</thead>
-							<tbody>
-								@if (GeneralDepartments is not null)
-								{
-									int count = 1;
-									foreach (var item in GeneralDepartments)
-									{
-										<tr>
-											<th scope="row">@count</th>
-											<td>@item.Id</td>
-											<td>@item.Name</td>
-											<td>
-													<i class="bi bi-pencil text-info cursorStyle"
-												   @onclick="() => EditClicked(item)"></i>
-													<i class="bi bi-trash text-danger cursorStyle"
-													   @onclick="() => DeleteClicked(item)"></i>
-											</td>
-										</tr>
-										count++;
-									}
-								}
-								else
-								{
-									<tr>
-										<td colspan="4">
-											<div class="alert alert-info text-center">
-												No General Department added yet!
-											</div>
-										</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-					</div>
-					</div>
-			</div>
-		</div>
-	</div>
-}
-<GeneralDepartmentDialog @ref ="generalDepartmentDialog"
-HandleSaveOperationEvent="HandleSaveOperationEvent"
-GeneralDepartment="GeneralDepartment"/>
+    <div class="container-fluid py-4">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-semibold text-primary">General Department</h4>
+                <button class="btn btn-primary rounded-pill px-4 d-flex align-items-center gap-2" @onclick="OpenDialog">
+                    <i class="bi bi-plus-circle-fill"></i> Add Department
+                </button>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0 ps-0"
+                                   placeholder="Search departments..."
+                                   @bind="searchTerm"
+                                   @oninput="FilterDepartments" />
+                        </div>
+                    </div>
+                </div>
 
+                @if (isLoading)
+                {
+                    <div class="d-flex justify-content-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive custom-scrollbar" style="max-height:580px;">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th scope="col" class="fw-semibold">#</th>
+                                    <th scope="col" class="fw-semibold">ID</th>
+                                    <th scope="col" class="fw-semibold">Department Name</th>
+                                    <th scope="col" class="fw-semibold text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (filteredDepartments is not null && filteredDepartments.Any())
+                                {
+                                    int count = 1;
+                                    foreach (var item in filteredDepartments)
+                                    {
+                                        <tr>
+                                            <th scope="row" class="text-muted">@count</th>
+                                            <td class="text-muted">@item.Id</td>
+                                            <td class="fw-medium">@item.Name</td>
+                                            <td class="text-end">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-2"
+                                                            @onclick="() => EditClicked(item)"
+                                                            title="Edit">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger rounded-pill"
+                                                            @onclick="() => DeleteClicked(item)"
+                                                            title="Delete">
+                                                        <i class="bi bi-trash-fill"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="alert alert-info text-center border-0 rounded-3 py-4">
+                                                <i class="bi bi-info-circle-fill fs-4 d-block mb-2"></i>
+                                                No departments found. Add your first department to get started.
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+            <div class="card-footer bg-white py-3 d-flex justify-content-between">
+                <div class="text-muted small">
+                    @if (filteredDepartments is not null && filteredDepartments.Any())
+                    {
+                        <span>Showing @filteredDepartments.Count of @GeneralDepartments.Count departments</span>
+                    }
+                </div>
+                <!-- Pagination controls can be added here -->
+            </div>
+        </div>
+    </div>
+}
+
+<GeneralDepartmentDialog @ref="generalDepartmentDialog"
+                         HandleSaveOperationEvent="HandleSaveOperationEvent"
+                         GeneralDepartment="GeneralDepartment" />
 
 <style>
-	.cursorStyle{
-		cursor:pointer;
-	}
+    .cursorStyle {
+        cursor: pointer;
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #dee2e6 #ffffff;
+    }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #dee2e6;
+            border-radius: 6px;
+        }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+
+    .sticky-top {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: #f8f9fa;
+    }
 </style>
+
 @code {
-	GeneralDepartmentDialog? generalDepartmentDialog;
-	GeneralDepartment GeneralDepartment = new();
-	public string Title { get; set; } = "Add";
-	public List<GeneralDepartment> GeneralDepartments { get; set; } = new ();
-	protected override async Task OnInitializedAsync()
-	{
-		await GetGeneralDepartments();
-		allState.Action += StateHasChanged;
-	}
-	private async Task GetGeneralDepartments()
-	{
-		GeneralDepartments = await generalDepartmentService.GetAll(Constants.GeneralDepartmentBaseUrl);
+    GeneralDepartmentDialog? generalDepartmentDialog;
+    GeneralDepartment GeneralDepartment = new();
+    public string Title { get; set; } = "Add";
+    public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
+    public List<GeneralDepartment> filteredDepartments { get; set; } = new();
+    private string searchTerm = string.Empty;
+    private bool isLoading = true;
 
-	}
-	void OpenDialog()
-	{
-		generalDepartmentDialog?.OpenDialog();
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        await GetGeneralDepartments();
+        allState.Action += StateHasChanged;
+    }
 
-	private async Task HandleSaveOperationEvent(GeneralDepartment generalDepartment)
-	{
-		bool successCheck = false;
-		if (generalDepartment.Id > 0)
-		{
-			var result = await generalDepartmentService
-				.Update(generalDepartment, Constants.GeneralDepartmentBaseUrl);
-			successCheck = await DisplayMessage(result.Flag, result.Message);
-		}
-		else
-		{
-			var response = await generalDepartmentService
-				.Insert(generalDepartment, Constants.GeneralDepartmentBaseUrl);
-			successCheck = await DisplayMessage(response.Flag, response.Message);
-		}
+    private async Task GetGeneralDepartments()
+    {
+        isLoading = true;
+        GeneralDepartments = await generalDepartmentService.GetAll(Constants.GeneralDepartmentBaseUrl);
+        filteredDepartments = GeneralDepartments;
+        isLoading = false;
+    }
 
-		if (successCheck)
-		{
-			GeneralDepartment = new();
-			await GetGeneralDepartments();
-			generalDepartmentDialog?.ChangeTitle("Add");
-		}
-	}
-	//Eidt
-	private void EditClicked(GeneralDepartment generalDepartment)
-	{
-		generalDepartmentDialog?.ChangeTitle("Update");
-		GeneralDepartment = generalDepartment;
-		OpenDialog();
-	}
-	//Delete
-	private async Task DeleteClicked(GeneralDepartment dep)
-	{
-		bool confirm = await dialogService.ConfirmAsync($"Are you sure you wanna delete {dep.Name}?", "Confirm Delete");
-		if (!confirm) return;
+    void OpenDialog()
+    {
+        generalDepartmentDialog?.OpenDialog();
+    }
 
-		var response = await generalDepartmentService.DeleteById(dep.Id, Constants.GeneralDepartmentBaseUrl);
-		if (await DisplayMessage(response.Flag, response.Message))
-		{
-			await GetGeneralDepartments();
-		}
-	}
+    private async Task HandleSaveOperationEvent(GeneralDepartment generalDepartment)
+    {
+        bool successCheck = false;
+        if (generalDepartment.Id > 0)
+        {
+            var result = await generalDepartmentService.Update(generalDepartment, Constants.GeneralDepartmentBaseUrl);
+            successCheck = await DisplayMessage(result.Flag, result.Message);
+        }
+        else
+        {
+            var response = await generalDepartmentService.Insert(generalDepartment, Constants.GeneralDepartmentBaseUrl);
+            successCheck = await DisplayMessage(response.Flag, response.Message);
+        }
 
-	private async Task<bool> DisplayMessage(bool flag, string message)
-	{
-		if (flag)
-		{
-			await dialogService.AlertAsync(message, "Success Operation");
-			return true;
-		}
-		else
-		{
-			await dialogService.AlertAsync(message, "Alert!");
-			return false;
-		}
-	}
+        if (successCheck)
+        {
+            GeneralDepartment = new();
+            await GetGeneralDepartments();
+            generalDepartmentDialog?.ChangeTitle("Add");
+        }
+    }
 
+    private void EditClicked(GeneralDepartment generalDepartment)
+    {
+        generalDepartmentDialog?.ChangeTitle("Update");
+        GeneralDepartment = generalDepartment;
+        OpenDialog();
+    }
 
-	public void Dispose()
-	{
-		allState.Action -= StateHasChanged;
-	}
+    private async Task DeleteClicked(GeneralDepartment dep)
+    {
+        bool confirm = await dialogService.ConfirmAsync($"Are you sure you want to delete \"{dep.Name}\"?", "Confirm Delete");
+        if (!confirm) return;
 
+        var response = await generalDepartmentService.DeleteById(dep.Id, Constants.GeneralDepartmentBaseUrl);
+        if (await DisplayMessage(response.Flag, response.Message))
+        {
+            await GetGeneralDepartments();
+        }
+    }
+
+    private async Task<bool> DisplayMessage(bool flag, string message)
+    {
+        if (flag)
+        {
+            await dialogService.AlertAsync(message, "Success Operation");
+            return true;
+        }
+        else
+        {
+            await dialogService.AlertAsync(message, "Alert!");
+            return false;
+        }
+    }
+
+    private void FilterDepartments(ChangeEventArgs e)
+    {
+        searchTerm = e.Value.ToString();
+        filteredDepartments = GeneralDepartments
+            .Where(d => d.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    public void Dispose()
+    {
+        allState.Action -= StateHasChanged;
+    }
 }

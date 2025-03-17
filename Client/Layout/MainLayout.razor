@@ -1,14 +1,13 @@
-﻿
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 @attribute [Authorize]
+
 <div class="page">
-    <div class="sidebar">
+    <div class="sidebar-wrapper sidebar">
         <NavMenu />
     </div>
-
     <main>
         <div class="top-row px-4">
-           <ProfileDropDown></ProfileDropDown>
+            <ProfileDropDown></ProfileDropDown>
         </div>
 
         <article class="content px-4">
@@ -16,5 +15,40 @@
         </article>
     </main>
 </div>
+
 <Syncfusion.Blazor.Popups.SfDialogProvider />
 
+<style>
+    .page {
+        display: flex;
+    }
+
+    .sidebar-wrapper {
+        width: var(--sidebar-width);
+        background-color: var(--sidebar-bg);
+        color: var(--sidebar-color);
+        overflow-x: hidden;
+        overflow-y: auto;
+        transition: width var(--transition-speed) ease;
+    }
+
+    main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .top-row {
+        background-color: var(--sidebar-bg);
+        color: var(--sidebar-color);
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem;
+    }
+</style>

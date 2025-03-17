@@ -53,14 +53,14 @@
 }
 
 <SanctionDialog @ref="sanctionDialog"
-                ItemModel="ItemModel"
-                SanctionTypes="SanctionTypes"
-                HandleSaveOperationEvent="HandleSaveOperationEvent" />
+ItemModel="ItemModel"
+SanctionTypes="SanctionTypes"
+HandleSaveOperationEvent="HandleSaveOperationEvent" />
 
 <style>
-    .cursorStyle 
+    #cursorStyle 
     {
-        cursor: pointer;
+    cursor: pointer;
     }
 </style>
 
@@ -100,10 +100,12 @@
             ItemModel = new();
             await GetSanctions();
         }
+       
     }
 
     private void EditClicked(Sanction item)
     {
+        sanctionDialog?.ChangeTitle("Update");
         ItemModel = item;
         OpenDialog();
     }

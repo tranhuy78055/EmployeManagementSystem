@@ -42,8 +42,13 @@
 		else
 		{
 			await HandleSaveOperationEvent.InvokeAsync(GeneralDepartment);
-			IsVisible = false;
+			CloseDialog();
 		}
+	}
+	public void CloseDialog()
+	{
+		IsVisible = false;
+		StateHasChanged();
 	}
 	public void ChangeTitle(string title)
 	{

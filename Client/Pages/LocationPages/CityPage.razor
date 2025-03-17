@@ -1,104 +1,186 @@
 ﻿@implements IDisposable
 @if (allState.ShowCity)
 {
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="float-start">Cities</h4>
-                        <button class="btn btn-outline-success float-end" @onclick="AddButtonClicked">
-                            <i class="bi bi-plus-circle-dotted"></i> Add City
-                        </button>
-                    </div>
-
-                    <div class="card-header" style="max-height:580px; overflow-x:hidden; overflow-y:scroll;">
-                        <div class="card-body">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Id</th>
-                                        <th scope="col">Country</th>
-                                        <th scope="col">City</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (Cities != null && Cities.Any())
-                                    {
-                                        int count = 1;
-                                        foreach (var item in Cities)
-                                        {
-                                            <tr>
-                                                <th scope="row">@count</th>
-                                                <td>@item.Id</td>
-                                                <td>@item.Country?.Name</td>
-                                                <td>@item.Name</td>
-                                                <td>
-                                                    <i class="bi bi-pencil text-info cursorStyle" @onclick="() => EditClicked(item)"></i>
-                                                    <i class="bi bi-trash text-danger cursorStyle" @onclick="() => DeleteClicked(item)"></i>
-                                                </td>
-                                            </tr>
-                                            count++;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td colspan="5">
-                                                <div class="alert alert-info text-center">No City added yet!</div>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+    <div class="container-fluid py-4">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-semibold text-primary">Cities</h4>
+                <button class="btn btn-primary rounded-pill px-4 d-flex align-items-center gap-2" @onclick="AddButtonClicked">
+                    <i class="bi bi-plus-circle-fill"></i> Add City
+                </button>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0 ps-0"
+                                   placeholder="Search cities..."
+                                   @bind="searchTerm"
+                                   @oninput="FilterCities" />
                         </div>
                     </div>
                 </div>
+
+                @if (isLoading)
+                {
+                    <div class="d-flex justify-content-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive custom-scrollbar" style="max-height:580px;">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th scope="col" class="fw-semibold">#</th>
+                                    <th scope="col" class="fw-semibold">ID</th>
+                                    <th scope="col" class="fw-semibold">Country</th>
+                                    <th scope="col" class="fw-semibold">City</th>
+                                    <th scope="col" class="fw-semibold text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (filteredCities is not null && filteredCities.Any())
+                                {
+                                    int count = 1;
+                                    foreach (var item in filteredCities)
+                                    {
+                                        <tr>
+                                            <th scope="row" class="text-muted">@count</th>
+                                            <td class="text-muted">@item.Id</td>
+                                            <td class="fw-medium">@item.Country?.Name</td>
+                                            <td class="fw-medium">@item.Name</td>
+                                            <td class="text-end">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-2"
+                                                            @onclick="() => EditClicked(item)"
+                                                            title="Edit">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger rounded-pill"
+                                                            @onclick="() => DeleteClicked(item)"
+                                                            title="Delete">
+                                                        <i class="bi bi-trash-fill"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5">
+                                            <div class="alert alert-info text-center border-0 rounded-3 py-4">
+                                                <i class="bi bi-info-circle-fill fs-4 d-block mb-2"></i>
+                                                No cities found. Add your first city to get started.
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+            <div class="card-footer bg-white py-3 d-flex justify-content-between">
+                <div class="text-muted small">
+                    @if (filteredCities is not null && filteredCities.Any())
+                    {
+                        <span>Showing @filteredCities.Count of @Cities.Count cities</span>
+                    }
+                </div>
+                <!-- Pagination controls can be added here -->
             </div>
         </div>
     </div>
 }
 
-<style>
-    .cursorStyle {
-        cursor: pointer;
-    }
-</style>
 <CityDialog @ref="cityDialog"
             HandleSaveOperationEvent="HandleSaveOperationEvent"
             City="City"
             Countries="Countries" />
 
+<style>
+    .cursorStyle {
+        cursor: pointer;
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #dee2e6 #ffffff;
+    }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #dee2e6;
+            border-radius: 6px;
+        }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+
+    .sticky-top {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: #f8f9fa;
+    }
+</style>
+
 @code {
+    private CityDialog? cityDialog;
+    private City City { get; set; } = new();
     public string Title { get; set; } = "Add";
-    CityDialog? cityDialog;
-    City City = new();
     public List<Country> Countries { get; set; } = new();
     public List<City> Cities { get; set; } = new();
+    public List<City> filteredCities { get; set; } = new();
+    private string searchTerm = string.Empty;
+    private bool isLoading = true;
+
     protected override async Task OnInitializedAsync()
     {
         await GetCities();
         await GetCountries();
         allState.Action += StateHasChanged;
     }
-    public async Task GetCities()
+
+    private async Task GetCities()
     {
+        isLoading = true;
         Cities = await cityService.GetAll(Constants.CityBaseUrl);
+        filteredCities = Cities;
+        isLoading = false;
     }
+
     private async Task GetCountries()
     {
         Countries = await countryService.GetAll(Constants.CountryBaseUrl);
     }
 
-    void AddButtonClicked()
+    private void AddButtonClicked()
     {
         cityDialog?.ChangeTitle("Add");
         City = new();
         OpenDialog();
     }
-    void OpenDialog()
+
+    private void OpenDialog()
     {
         cityDialog?.OpenDialog();
     }
@@ -108,14 +190,12 @@
         bool successCheck = false;
         if (city.Id > 0)
         {
-            var result = await cityService
-                .Update(city, Constants.CityBaseUrl);
+            var result = await cityService.Update(city, Constants.CityBaseUrl);
             successCheck = await DisplayMessage(result.Flag, result.Message);
         }
         else
         {
-            var response = await cityService
-                .Insert(city, Constants.CityBaseUrl);
+            var response = await cityService.Insert(city, Constants.CityBaseUrl);
             successCheck = await DisplayMessage(response.Flag, response.Message);
         }
 
@@ -126,22 +206,21 @@
             cityDialog?.ChangeTitle("Add");
         }
     }
-    //Edit
+
     private void EditClicked(City city)
     {
         cityDialog?.ChangeTitle("Update");
         City = city;
         OpenDialog();
     }
-    //Delete
+
     private async Task DeleteClicked(City city)
     {
-        bool confirm = await dialogService.ConfirmAsync($"Are you sure you wanna delete {city.Name}?", "Confirm Delete");
+        bool confirm = await dialogService.ConfirmAsync($"Are you sure you want to delete {city.Name}?", "Confirm Delete");
         if (!confirm) return;
 
         var response = await cityService.DeleteById(city.Id, Constants.CityBaseUrl);
-        var result = await DisplayMessage(response.Flag, response.Message);
-        if (result)
+        if (await DisplayMessage(response.Flag, response.Message))
         {
             await GetCities();
         }
@@ -159,6 +238,15 @@
             await dialogService.AlertAsync(message, "Alert!");
             return false;
         }
+    }
+
+    private void FilterCities(ChangeEventArgs e)
+    {
+        searchTerm = e.Value.ToString();
+        filteredCities = Cities
+            .Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                        c.Country?.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) == true)
+            .ToList();
     }
 
     public void Dispose()

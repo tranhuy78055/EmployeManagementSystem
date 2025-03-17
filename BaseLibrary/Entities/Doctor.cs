@@ -10,7 +10,7 @@ namespace BaseLibrary.Entities
     public class Doctor:OtherBaseEntity
     {
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
         [Required]
         public string MedicalDiagnose { get; set; } = string.Empty;
         [Required]

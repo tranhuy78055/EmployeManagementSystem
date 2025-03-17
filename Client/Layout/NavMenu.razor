@@ -1,200 +1,381 @@
 ﻿@attribute [Authorize]
 
-<div class="top-row ps-3 navbar navbar-dark">
-	<div class="container-fluid">
-		<a class="navbar-brand cursorStyle " @onclick="HomeClicked">
-			<span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+<div class="sidebar-wrapper">
+	<div class="sidebar-brand">
+		<a class="d-flex align-items-center" @onclick="HomeClicked">
+			<span class="bi bi-house-door-fill me-2" aria-hidden="true"></span>
+			<span class="brand-text">Dashboard</span>
 		</a>
-		<button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-			<span class="navbar-toggler-icon"></span>
+		<button title="Toggle Navigation" class="sidebar-toggle d-lg-none" @onclick="ToggleNavMenu">
+			<span class="bi bi-list"></span>
 		</button>
 	</div>
-</div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-	<div class="flex-column">
-		<AuthorizeView Roles="Admin">
-			<Authorized>
-
-				<div class="nav-item px-3">
-					<NavLink class="nav-link p-2" @onclick="ShowAdminMenuContainer" style="cursor:pointer;" href="javascript:void()">
-						<div class="hstack gap-1">
-							<span class="bi bi-person-fill fs-3 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-							<span>Administration</span>
+	<div class="@NavMenuCssClass sidebar-content" @onclick:stopPropagation>
+		<div class="sidebar-menu">
+			<AuthorizeView Roles="Admin">
+				<Authorized>
+					<div class="menu-category">
+						<div class="menu-item">
+							<a class="menu-link @(IsAdminMenuOpen ? "active" : "")" @onclick="ShowAdminMenuContainer">
+								<span class="menu-icon">
+									<span class="bi bi-person-fill"></span>
+								</span>
+								<span class="menu-text">Administration</span>
+								<span class="menu-arrow @(IsAdminMenuOpen ? "open" : "")">
+									<span class="bi bi-chevron-right"></span>
+								</span>
+							</a>
+							<div class="submenu @(IsAdminMenuOpen ? "show" : "")">
+								<a class="submenu-link" @onclick="UserClicked">
+									<span class="submenu-icon">
+										<span class="bi bi-people"></span>
+									</span>
+									<span class="submenu-text">Users</span>
+								</a>
+							</div>
 						</div>
-					</NavLink>
+					</div>
+				</Authorized>
+			</AuthorizeView>
 
-					<a class="nav-link p-2 text-white" style="margin-left:5rem; visibility:@CssStyle">
-						<div class="hstack" @onclick="UserClicked">
-							<span class="bi bi-people fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-							<span>Users</span>
-						</div>
+			<div class="menu-category">
+				<div class="menu-item">
+					<a class="menu-link @(IsManagementMenuOpen ? "active" : "")" @onclick="ShowDepartmentContainer">
+						<span class="menu-icon">
+							<span class="bi bi-backpack4-fill"></span>
+						</span>
+						<span class="menu-text">Management</span>
+						<span class="menu-arrow @(IsManagementMenuOpen ? "open" : "")">
+							<span class="bi bi-chevron-right"></span>
+						</span>
 					</a>
+					<div class="submenu @(IsManagementMenuOpen ? "show" : "")">
+						<div class="submenu-group">
+							<span class="submenu-group-title">Departments</span>
+							<a class="submenu-link" @onclick="GeneralDepartmentClicked">
+								<span class="submenu-icon">
+									<span class="bi bi-file-medical"></span>
+								</span>
+								<span class="submenu-text">General Department</span>
+							</a>
+							<a class="submenu-link" @onclick="DepartmentClicked">
+								<span class="submenu-icon">
+									<span class="bi bi-substack"></span>
+								</span>
+								<span class="submenu-text">Department</span>
+							</a>
+							<a class="submenu-link" @onclick="BranchClicked">
+								<span class="submenu-icon">
+									<span class="bi bi-chevron-bar-contract"></span>
+								</span>
+								<span class="submenu-text">Branch</span>
+							</a>
+						</div>
+
+						<div class="submenu-group">
+							<span class="submenu-group-title">Locations</span>
+							<a class="submenu-link" @onclick="CountryClicked">
+								<span class="submenu-icon">
+									<span class="bi bi-geo-alt"></span>
+								</span>
+								<span class="submenu-text">Country</span>
+							</a>
+							<a class="submenu-link" @onclick="CityClicked">
+								<span class="submenu-icon">
+									<span class="bi bi-pin-map-fill"></span>
+								</span>
+								<span class="submenu-text">City</span>
+							</a>
+							<a class="submenu-link" @onclick="TownClicked">
+								<span class="submenu-icon">
+									<span class="bi bi-geo"></span>
+								</span>
+								<span class="submenu-text">Town</span>
+							</a>
+						</div>
+
+						<div class="submenu-group">
+							<span class="submenu-group-title">HR Types</span>
+							<a class="submenu-link" @onclick="OvertimeTypeClicked">
+								<span class="submenu-icon">
+									<span class="bi bi-stopwatch"></span>
+								</span>
+								<span class="submenu-text">Overtime Type</span>
+							</a>
+							<a class="submenu-link" @onclick="SanctionTypeClicked">
+								<span class="submenu-icon">
+									<span class="bi bi-x-octagon"></span>
+								</span>
+								<span class="submenu-text">Sanction Type</span>
+							</a>
+							<a class="submenu-link" @onclick="VacationTypeClicked">
+								<span class="submenu-icon">
+									<span class="bi bi-backpack3"></span>
+								</span>
+								<span class="submenu-text">Vacation Type</span>
+							</a>
+						</div>
+
+						<div class="submenu-group">
+							<span class="submenu-group-title">Personnel</span>
+							<a class="submenu-link" @onclick="EmployeeClicked">
+								<span class="submenu-icon">
+									<span class="bi bi-people-fill"></span>
+								</span>
+								<span class="submenu-text">Employees</span>
+							</a>
+						</div>
+					</div>
 				</div>
-			</Authorized>
-		</AuthorizeView>
-
-		<div class="nav-item px-3" style="margin-top:@DepartmentMargin">
-			<NavLink class="nav-link p-2" @onclick="ShowDepartmentContainer" style="cursor:pointer;" href="javascript:void()">
-				<div class="hstack gap-1">
-					<span class="bi bi-backpack4-fill fs-3 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-					<span>Management</span>
-				</div>
-			</NavLink>
-
-			<div class="nav-link p-2 text-white" style="margin-left:3rem; visibility:@DepartmentCssStyle">
-				<ul class="list-group">
-					<li style="list-style:none" class="cursorStyle">
-						<a class="nav-link p-2" @onclick="GeneralDepartmentClicked">
-							<div class="hstack text-wrap">
-								<span class="bi bi-file-medical fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-								<span class="fs-6">GeneralDepartment</span>
-							</div>
-						</a>
-					</li>
-
-					<li style="list-style:none" class="cursorStyle" @onclick="DepartmentClicked">
-						<a class="nav-link p-2">
-							<div class="hstack">
-								<span class="bi bi-substack fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-								<span>Department</span>
-							</div>
-						</a>
-					</li>
-					<li style="list-style:none" class="cursorStyle" @onclick="BranchClicked">
-						<a class="nav-link p-2">
-							<div class="hstack">
-								<span class="bi bi-chevron-bar-contract fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-								<span>Branch</span>
-							</div>
-						</a>
-					</li>
-					<li style="list-style:none">
-						<hr />
-					</li>
-					<li style="list-style:none">
-						<a class="nav-link p-2 cursorStyle" @onclick="CountryClicked">
-							<div class="hstack">
-								<span class="bi bi-geo-alt fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-								<span>Country</span>
-							</div>
-						</a>
-					</li>
-
-					<li style="list-style:none">
-						<a class="nav-link p-2 cursorStyle" @onclick="CityClicked">
-							<div class="hstack">
-								<span class="bi bi-pin-map-fill fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-								<span>City</span>
-							</div>
-						</a>
-					</li>
-
-					<li style="list-style:none">
-						<a class="nav-link p-2 cursorStyle" @onclick="TownClicked">
-							<div class="hstack">
-								<span class="bi bi-geo fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-								<span>Town</span>
-							</div>
-						</a>
-					</li>
-					<li style="list-style:none">
-						<hr />
-					</li>
-					<li style="list-style:none">
-						<a class="nav-link p-2 cursorStyle" @onclick="OvertimeTypeClicked">
-							<div class="hstack">
-								<span class="bi bi-stopwatch fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-								<span>Overtime Type</span>
-							</div>
-						</a>
-					</li>
-					<li style="list-style:none">
-						<a class="nav-link p-2 cursorStyle" @onclick="SanctionTypeClicked">
-							<div class="hstack">
-								<span class="bi bi-x-octagon fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-								<span>Sanction Type</span>
-							</div>
-						</a>
-					</li>
-					<li style="list-style:none">
-						<a class="nav-link p-2 cursorStyle" @onclick="VacationTypeClicked">
-							<div class="hstack">
-								<span class="bi bi-backpack3 fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-								<span>Vacation Type</span>
-							</div>
-						</a>
-					</li>
-					<li style="list-style:none">
-						<hr />
-					</li>
-					<li style="list-style:none">
-						<a class="nav-link p-2 cursorStyle" @onclick="EmployeeClicked">
-							<div class="hstack">
-								<span class="bi bi-people-fill fs-5 text-center" aria-hidden="true" style="margin-top:-2rem"></span>
-								<span>Employees</span>
-							</div>
-						</a>
-					</li>
-
-				</ul>
 			</div>
 		</div>
-
-
 	</div>
 </div>
 
-
-
 <style>
-	.cursorStyle {
+	:root {
+		--sidebar-width: 260px;
+		--sidebar-collapsed-width: 70px;
+		--sidebar-bg: #2c3e50;
+		--sidebar-color: #ecf0f1;
+		--sidebar-hover-bg: #34495e;
+		--sidebar-active-bg: #3498db;
+		--submenu-bg: #1a252f;
+		--menu-icon-size: 18px;
+		--submenu-indent: 8px;
+		--transition-speed: 0.3s;
+	}
+
+	.sidebar-wrapper {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: var(--sidebar-width);
+		background-color: var(--sidebar-bg);
+		color: var(--sidebar-color);
+		z-index: 1000;
+		overflow-x: hidden;
+		overflow-y: auto;
+		transition: width var(--transition-speed) ease;
+	}
+
+	.sidebar-brand {
+		height: 64px;
+		padding: 0 20px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+		.sidebar-brand a {
+			color: white;
+			font-weight: 600;
+			font-size: 1.1rem;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+	.brand-text {
+		opacity: 1;
+		transition: opacity var(--transition-speed) ease;
+	}
+
+	.sidebar-toggle {
+		background: transparent;
+		border: none;
+		color: var(--sidebar-color);
+		font-size: 1.5rem;
+		cursor: pointer;
+		transition: transform var(--transition-speed) ease;
+	}
+
+	.sidebar-content {
+		display: flex;
+		flex-direction: column;
+		height: calc(100% - 64px);
+	}
+
+	.sidebar-menu {
+		padding: 10px 0;
+	}
+
+	.menu-category {
+		margin-bottom: 10px;
+	}
+
+	.menu-category-title {
+		padding: 10px 20px;
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: rgba(255, 255, 255, 0.5);
+	}
+
+	.menu-item {
+		position: relative;
+	}
+
+	.menu-link {
+		display: flex;
+		align-items: center;
+		padding: 10px 20px;
+		color: var(--sidebar-color);
+		text-decoration: none;
+		transition: background-color var(--transition-speed) ease;
+		cursor: pointer;
+		position: relative;
+	}
+
+		.menu-link:hover {
+			background-color: var(--sidebar-hover-bg);
+		}
+
+		.menu-link.active {
+			background-color: var(--sidebar-active-bg);
+		}
+
+	.menu-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		font-size: var(--menu-icon-size);
+		margin-right: 10px;
+	}
+
+	.menu-text {
+		flex: 1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.menu-arrow {
+		transition: transform var(--transition-speed) ease;
+	}
+
+		.menu-arrow.open {
+			transform: rotate(90deg);
+		}
+
+	.submenu {
+		max-height: 0;
+		overflow: hidden;
+		background-color: var(--submenu-bg);
+		transition: max-height var(--transition-speed) ease;
+	}
+
+		.submenu.show {
+			max-height: 1000px;
+		}
+
+	.submenu-group {
+		padding: 5px 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+		.submenu-group:last-child {
+			border-bottom: none;
+		}
+
+	.submenu-group-title {
+		display: block;
+		padding: 8px 20px 4px 48px;
+		font-size: 0.75rem;
+		color: rgba(255, 255, 255, 0.5);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.submenu-link {
+		display: flex;
+		align-items: center;
+		padding: 8px 20px 8px 48px;
+		color: var(--sidebar-color);
+		text-decoration: none;
+		transition: background-color var(--transition-speed) ease;
 		cursor: pointer;
 	}
-</style>
+
+		.submenu-link:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+		}
+
+	.submenu-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 20px;
+		font-size: calc(var(--menu-icon-size) - 2px);
+		margin-right: 10px;
+	}
+
+	.submenu-text {
+		flex: 1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	@@media (max-width: 992px) {
+		.sidebar-wrapper {
+			width: var(--sidebar-width);
+			transform: translateX(-100%);
+			transition: transform var(--transition-speed) ease;
+			z-index: 1000;
+		}
+
+			.sidebar-wrapper.show {
+				transform: translateX(0);
+			}
+
+		.collapse {
+			transform: translateX(-100%);
+		}
+
+			.collapse.show {
+				transform: translateX(0);
+			}
+
+		.sidebar-toggle {
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			z-index: 1100;
+			background-color: var(--sidebar-hover-bg);
+			padding: 5px;
+			border-radius: 4px;
+		}
+	}
+	</style>
+
+
 @code {
 	private bool collapseNavMenu = true;
 
-	private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+	private string? NavMenuCssClass => collapseNavMenu ? "collapse" : "show";
 
 	private void ToggleNavMenu()
 	{
 		collapseNavMenu = !collapseNavMenu;
 	}
 
-	public string DepartmentMargin { get; set; } = "-1.2rem";
-	public string CssStyle = "hidden";
-	public bool ShowHide { get; set; } = false;
+	private bool IsAdminMenuOpen { get; set; } = false;
+	private bool IsManagementMenuOpen { get; set; } = false;
 
 	private void ShowAdminMenuContainer()
 	{
-		ShowHide = !ShowHide;
-		if (ShowHide)
-		{
-			DepartmentMargin = "0";
-			CssStyle = "visible";
-		}
-		else
-		{
-			DepartmentMargin = "-3.5rem";
-			CssStyle = "hidden";
-		}
+		IsAdminMenuOpen = !IsAdminMenuOpen;
 	}
-	private string DepartmentCssStyle = "hidden";
-	public bool ShowHideDepartment { get; set; } = false;
 
 	private void ShowDepartmentContainer()
 	{
-		ShowHideDepartment = !ShowHideDepartment;
-		if (ShowHideDepartment)
-		{
-			DepartmentCssStyle = "visible";
-		}
-		else
-		{
-			DepartmentCssStyle = "hidden";
-		}
+		IsManagementMenuOpen = !IsManagementMenuOpen;
 	}
+
 	//General Department / Department / Branch
 	void GeneralDepartmentClicked()
 	{
