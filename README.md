@@ -1,3 +1,4 @@
+![Alt Text](UI.gif)
 # Blazor WebAssembly Project
 
 ## Overview
